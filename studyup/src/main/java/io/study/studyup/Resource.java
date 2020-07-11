@@ -19,7 +19,7 @@ public class Resource {
     @GetMapping("/")
     @ResponseBody
     public String home(){
-        return "<h2><center>Welcome!</center></h2>";
+        return "Welcome!" ;
     }
 
     @PostMapping("/signup")
@@ -161,7 +161,7 @@ public class Resource {
                 ResultSet groupInfo = stmt.executeQuery(extractGroupInfo);
 
                 // Accessing helper method to create table
-                groupInfoData = viewTable(groupInfo, "<h2><center>Study Groups/center></h2>");
+                groupInfoData = viewTable(groupInfo, "<h2><center>Study Groups</center></h2>");
                 groupInfo.close();
             }
 
