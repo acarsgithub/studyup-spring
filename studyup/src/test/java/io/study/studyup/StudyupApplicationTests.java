@@ -26,13 +26,13 @@ class StudyupApplicationTests {
 
 
 	@Test
-	@WithMockUser(username = "acarary", roles = {"USER"})
+	@WithMockUser(username = "basatg1", roles = {"USER"})
 	public void testCreateStudyGroup() throws Exception {
 		// Creating object to store body message key-value pairs
 		Object randomObj = new Object() {
-			public final String groupname = "study4ever";
-			public final String subject = "MATH 1301";
-			public final String description = "We meet MWF @6pm in Buttrick";
+			public final String groupname = "study5ever";
+			public final String subject = "MATH 1300";
+			public final String description = "We meet MWF @7pm in Buttrick";
 		};
 
 		ObjectMapper objectMapper = new ObjectMapper();
