@@ -270,7 +270,6 @@ public class Resource {
 
 
 
-    // HERE KEEP GOING
     @GetMapping("/groups")
     @ResponseBody
     public String allGroupsHome(){
@@ -314,6 +313,7 @@ public class Resource {
     }
 
 
+
     @GetMapping("/{username}")
     @ResponseBody
     public String userHome(@PathVariable("username") String username, Principal principal){
@@ -321,11 +321,19 @@ public class Resource {
         // Connection and statement for SQL database
         Connection conn = null;
         Statement stmt = null;
-        String loggedInUser = principal.getName();
-        int id = -1;
 
+        // Getting logged in username
+        String loggedInUser = principal.getName();
+
+        // Prepared statements to prevent SQL Injection
+        PreparedStatement getIDPS = null;
+        PreparedStatement getGroupIDPS = null;
+
+        // Variable for data storage later
+        int id = -1;
         StringBuilder data = new StringBuilder();
 
+        // Determining if logged in user matches username path variable give
         if(!loggedInUser.equals(username)){
             return "<h2><center>You do not have access to this individual's page!</center></h2>";
         }
@@ -336,23 +344,34 @@ public class Resource {
                     .getConnection("jdbc:mysql://localhost:3306/studyup", "root", pass);
             stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
-            // Get group information
-            String getUserID = "SELECT id FROM user WHERE username = '" + loggedInUser + "'";
-            ResultSet userIDSet = stmt.executeQuery(getUserID);
+            // Get id of user using prepared statement to prevent SQL Injection
+            String getUserID = "SELECT id FROM user WHERE username = ?";
+            getIDPS = conn.prepareStatement(getUserID);
+            getIDPS.setString(1, username);
+            ResultSet userIDSet = getIDPS.executeQuery();
+
+            // Getting actual id and storing it
             while(userIDSet.next()){
                 id = userIDSet.getInt("id");
             }
 
-            String findGroupsForID = "SELECT groupid FROM associations WHERE userid = '" + id + "'";
-            ResultSet groups = stmt.executeQuery(findGroupsForID);
+            // Getting groupID's of all groups associated with the user using prepared statement to prevetn injection
+            String findGroupsForID = "SELECT groupid FROM associations WHERE userid = ?";
+            getGroupIDPS = conn.prepareStatement(findGroupsForID);
+            getGroupIDPS.setInt(1, id);
+            ResultSet groups = getGroupIDPS.executeQuery();
+
+            // Putting every group user is in in its own table to display
             while(groups.next()){
+
+                // Security measure against SQL Injection already set in place, groupid is auto incremented!
+                // I believe I don't need to worry about this issue, but may need to come back for it later
                 int groupID = groups.getInt("groupid");
                 String findGroupInfo = "SELECT * FROM studygroups WHERE groupid = '" + groupID + "'";
                 ResultSet groupInfoSet = stmt.executeQuery(findGroupInfo);
                 data.append(viewTable(groupInfoSet, "<h2><center>Group ID: " + groupID + "</center</h2>")).append("<br><br>");
                 groupInfoSet.close();
             }
-
 
         } catch (Exception se) { se.printStackTrace(); }
         // Close Resources
@@ -363,10 +382,12 @@ public class Resource {
             se.printStackTrace();
         }
 
+        // Printing out data
         return data.toString();
     }
 
 
+    // HERE KEEP GOING
     @GetMapping("/{username}/requests")
     @ResponseBody
     public String userRequests(@PathVariable("username") String username, Principal principal,
@@ -377,11 +398,15 @@ public class Resource {
         // Connection and statement for SQL database
         Connection conn = null;
         Statement stmt = null;
+
+        // Using principal to get logged in username
         String loggedInUser = principal.getName();
 
+        // Variables to store data later
         int id = -1;
         StringBuilder data = new StringBuilder();
 
+        // Determining if logged in user has access to path variable username given
         if(!loggedInUser.equals(username)){
             return "<h2><center>You do not have access to this individual's page!</center></h2>";
         }
@@ -392,6 +417,7 @@ public class Resource {
                     .getConnection("jdbc:mysql://localhost:3306/studyup", "root", pass);
             stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
+            // If optional parameter request is not given, continue forward here
             if(requestUserID == -1){
 
                 // Get user id
@@ -404,7 +430,9 @@ public class Resource {
                 String findGroupsForID = "SELECT requestuserid, groupname FROM requests WHERE groupadmin_id = '" + id + "'";
                 ResultSet groups = stmt.executeQuery(findGroupsForID);
                 return viewTable(groups, "<h2><center>All Requests For " + username + "</center></h2>");
+
             } else {
+
                 if (decision){
                     String requestDeny = "DELETE FROM requests WHERE requestuserid = '" + requestUserID + "' AND groupid = '" + groupID + "'";
                     stmt.executeUpdate(requestDeny);
@@ -416,10 +444,13 @@ public class Resource {
                     stmt.executeUpdate(insertUser);
 
                     return "<h2><center>Successfully approved user request!</center></h2>";
+
                 } else {
+
                     String requestDeny = "DELETE FROM requests WHERE requestuserid = '" + requestUserID + "' AND groupid = '" + groupID + "'";
                     stmt.executeUpdate(requestDeny);
                     return "<h2></center>You successfully denied the request!</center></h2>";
+
                 }
             }
 
@@ -433,6 +464,7 @@ public class Resource {
             se.printStackTrace();
         }
 
+        // Just needed for function to not cause error
         return "";
     }
 
@@ -473,5 +505,4 @@ public class Resource {
         // Return filled table
         return result.toString();
     }
-
 }
