@@ -14,12 +14,28 @@ public class Resource {
 
     final String pass = "";
 
+    /*
+        Method: home
+        Purpose: temporary homepage for everyone to access when introduced to app
+     */
     @GetMapping("/")
     @ResponseBody
     public String home(){
         return "Welcome!" ;
     }
 
+    /*
+        Method: signup
+        Purpose: this method will allow for an individual to create an account with studyup
+        RequestBody jsonStr - this parameter is a json datatype that should store 4 key-value pairs
+                     --- username of user creating account
+                     --- password of user creating account
+                     --- email of user creating account
+                     --- classrank of user creating account (has to be FRESHMAN, SOPHOMORE, JUNIOR, SENIOR)
+        Conditionals: the username and email cannot already be taken
+
+        NEEDED: forcing user to input secure password, must actually hash the password, validating classrank
+     */
     @PostMapping("/signup")
     @ResponseBody
     public String createAccount(@RequestBody String jsonStr) throws JSONException {
@@ -83,7 +99,14 @@ public class Resource {
     }
 
 
+    /*
+        Method: requestSend
+        Purpose: this method will allow users to request joining a studygroup
+        RequestBody jsonStr - this json will store one key-value pair
+                    --- groupname - the group the user is requesting to join
 
+        NEEDED: must ensure groupname is properly typed in and a groupname that actually exists
+     */
     @PostMapping("/request-group")
     @ResponseBody
     public String requestSend(@RequestBody String jsonStr, Principal principal) throws JSONException {
@@ -167,7 +190,17 @@ public class Resource {
     }
 
 
+    /*
+        Method: createNewGroup
+        Purpose: this will allow the logged in user to create a new group and will place him as the admin of the group
+        RequestBody jsonStr - this json will store 3 key-value pairs
+                    --- groupname will be the name of the group the user wants to create (should be unique)
+                    --- subject will be the subject the studygroup will associate with
+                    --- description should contain date and time of meetings and extra stuff the user mentions
+        Principal -  this will be the currently logged in user
 
+        NEEDED: ensure subject is a valid subject of classes at each university
+     */
     @PostMapping("/create-group")
     @ResponseBody
     public String createNewGroup(@RequestBody String jsonStr, Principal principal) throws JSONException {
@@ -185,6 +218,7 @@ public class Resource {
         int realAdminID = -1;
         int groupID = -1;
 
+        // Prepared statements for protection against SQL Injection
         PreparedStatement userIDPS = null;
         PreparedStatement createGroupPS = null;
         PreparedStatement groupIDPS = null;
@@ -269,7 +303,11 @@ public class Resource {
     }
 
 
-
+    /*
+        Method: allGroupsHome
+        Purpose: this method will display all groups in existence currently and will display the group admin, the num users,
+            the groupname, the subject of each group, and the description of each group
+     */
     @GetMapping("/groups")
     @ResponseBody
     public String allGroupsHome(){
@@ -313,7 +351,12 @@ public class Resource {
     }
 
 
-
+    /*
+        Method: userHome
+        Purpose: this method will return  all groups assoicated with the user to show the user all the active groups they are in
+        Principal - the currently logged in user
+        PathVariable username - the username of the person's groups to display... MUST BE currently logged in user or access is restricted
+     */
     @GetMapping("/{username}")
     @ResponseBody
     public String userHome(@PathVariable("username") String username, Principal principal){
@@ -387,7 +430,21 @@ public class Resource {
     }
 
 
-    // HERE KEEP GOING
+    /*
+        Method: userRequests
+        Purpose: this method will display all requests a user has (if they are an admin of any groups) and will allow them
+            to accept of decline requests depending on if optional parameters are passed in
+        PathVariable username - the username of the person's requests to see.. MUST BE logged in user or access forbidden
+        Principal - the currently logged in user
+        OptionalRequestParam requestUserID - this is the requesterID the user will be accepting/rejecting to group
+        OptionalRequestParam groupID - this is the groupID associated with the requester
+        OptionalRequestParam decision - this is the decision of the user for the requester and the group
+
+
+        NEEDED: check all 3 optional parameters, ensure groupID and requesterID are assoicated in requests table,
+            possibly convert to POST method
+
+     */
     @GetMapping("/{username}/requests")
     @ResponseBody
     public String userRequests(@PathVariable("username") String username, Principal principal,
@@ -401,6 +458,13 @@ public class Resource {
 
         // Using principal to get logged in username
         String loggedInUser = principal.getName();
+
+        // Prepared Statements for protection against SQL Injection
+        PreparedStatement getIDPS = null;
+        PreparedStatement getRequests = null;
+        PreparedStatement deleteRequest1 = null;
+        PreparedStatement updateStudyGroupPS = null;
+        PreparedStatement updateAssociationsPS = null;
 
         // Variables to store data later
         int id = -1;
@@ -420,40 +484,66 @@ public class Resource {
             // If optional parameter request is not given, continue forward here
             if(requestUserID == -1){
 
-                // Get user id
-                String getUserID = "SELECT id FROM user WHERE username = '" + loggedInUser + "'";
-                ResultSet userIDSet = stmt.executeQuery(getUserID);
+                // Get user id SQL statement
+                String getUserID = "SELECT id FROM user WHERE username = ?";
+
+                // Using prepared statement to prevent SQL injection
+                getIDPS = conn.prepareStatement(getUserID);
+                getIDPS.setString(1, loggedInUser);
+                ResultSet userIDSet = getIDPS.executeQuery();
+
+                // Saving id to variable
                 while(userIDSet.next()){
                     id = userIDSet.getInt("id");
                 }
 
-                String findGroupsForID = "SELECT requestuserid, groupname FROM requests WHERE groupadmin_id = '" + id + "'";
-                ResultSet groups = stmt.executeQuery(findGroupsForID);
+                // SQL statement to show all requests of logged in user
+                String findGroupsForID = "SELECT requestuserid, groupname FROM requests WHERE groupadmin_id = ?";
+
+                // Using prepared statement to prevent SQL Injection
+                getRequests = conn.prepareStatement(findGroupsForID);
+                getRequests.setInt(1, id);
+                ResultSet groups = getRequests.executeQuery();
+
+                // Passing in result set and returning table of requests to user
                 return viewTable(groups, "<h2><center>All Requests For " + username + "</center></h2>");
 
             } else {
 
+                // Deleting request from requests table
+                String requestDelete = "DELETE FROM requests WHERE requestuserid = ? AND groupid = ?";
+
+                // Using prepared statement to prevent SQL Injection
+                deleteRequest1 = conn.prepareStatement(requestDelete);
+                deleteRequest1.setInt(1, requestUserID);
+                deleteRequest1.setString(2, groupID);
+                deleteRequest1.executeUpdate();
+
+                // If optional parameters given, determine if decision is yes or no
                 if (decision){
-                    String requestDeny = "DELETE FROM requests WHERE requestuserid = '" + requestUserID + "' AND groupid = '" + groupID + "'";
-                    stmt.executeUpdate(requestDeny);
 
-                    String numUsersIncrease = "UPDATE studygroups SET numusers = numusers + 1 WHERE groupID = '" + groupID + "'";
-                    stmt.executeUpdate(numUsersIncrease);
+                    // Updating numusers in studygroup since request is accepted
+                    String numUsersIncrease = "UPDATE studygroups SET numusers = numusers + 1 WHERE groupID = ?";
+                    updateStudyGroupPS = conn.prepareStatement(numUsersIncrease);
+                    updateStudyGroupPS.setString(1, groupID);
+                    updateStudyGroupPS.executeUpdate();
 
-                    String insertUser = "INSERT INTO associations(`groupid`, `userid`, `roles`) VALUES ('" + groupID + "', " + requestUserID + "', ROLE_USER)";
-                    stmt.executeUpdate(insertUser);
+                    // Adding accepted user as an association in the table
+                    String insertUser = "INSERT INTO associations(`groupid`, `userid`, `roles`) VALUES (?, ?, ROLE_USER)";
+                    updateAssociationsPS = conn.prepareStatement(insertUser);
+                    updateAssociationsPS.setString(1, groupID);
+                    updateAssociationsPS.setInt(2, requestUserID);
+                    updateAssociationsPS.executeUpdate();
 
+                    // Successfully accepting user to studygroup
                     return "<h2><center>Successfully approved user request!</center></h2>";
 
                 } else {
 
-                    String requestDeny = "DELETE FROM requests WHERE requestuserid = '" + requestUserID + "' AND groupid = '" + groupID + "'";
-                    stmt.executeUpdate(requestDeny);
+                    // Say you've successfully deleted the request
                     return "<h2></center>You successfully denied the request!</center></h2>";
-
                 }
             }
-
 
         } catch (Exception se) { se.printStackTrace(); }
         // Close Resources
