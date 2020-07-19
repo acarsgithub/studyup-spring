@@ -19,7 +19,6 @@ public class Resource {
         Purpose: temporary homepage for everyone to access when introduced to app
      */
     @GetMapping("/")
-    @ResponseBody
     public String home(){
         return "Welcome!" ;
     }
@@ -353,7 +352,7 @@ public class Resource {
 
     /*
         Method: userHome
-        Purpose: this method will return  all groups assoicated with the user to show the user all the active groups they are in
+        Purpose: this method will return  all groups associated with the user to show the user all the active groups they are in
         Principal - the currently logged in user
         PathVariable username - the username of the person's groups to display... MUST BE currently logged in user or access is restricted
      */
@@ -366,7 +365,8 @@ public class Resource {
         Statement stmt = null;
 
         // Getting logged in username
-        String loggedInUser = principal.getName();
+        // String loggedInUser = principal.getName();
+        String loggedInUser = username;
 
         // Prepared statements to prevent SQL Injection
         PreparedStatement getIDPS = null;
