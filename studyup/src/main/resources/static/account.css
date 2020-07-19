@@ -1,0 +1,89 @@
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+/*  width:40/*%;
+*/*/}
+
+.title {
+  color: grey;
+  font-size: 18px;
+}
+
+button {
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+/*a {
+  text-decoration: none;
+  font-size: 22px;
+  color: black;
+}*/
+
+button:hover, a:hover {
+  opacity: 0.7;
+}
+
+
+
+.links{
+  display: flex;
+  justify-content: space-between;
+}
+
+.page{
+  background-image: linear-gradient( 109.6deg,  rgba(232,252,252,1) 11.2%, rgba(252,215,134,1) 56.2%, rgba(247,124,124,1) 100.2% );
+  background-size: cover;
+  padding: 100px;
+  padding-bottom: 50px;
+  padding-top: 60px;
+}
+
+.card{
+  padding: 10px;
+}
+
+li{
+  padding: 5px;
+}
+
+.info{
+  border: 5px solid black;
+  padding: 0;
+}
+
+button{
+  width: 30%;
+}
+
+
+
+.scard {
+  display: grid;
+  grid-template-columns: 300px;
+  grid-template-rows: 210px 210px 80px;
+  grid-template-areas: "image" "text" "stats";
+
+  border-radius: 18px;
+  background: white;
+  box-shadow: 5px 5px 15px rgba(0,0,0,0.9);
+  font-family: roboto;
+  text-align: center;
+  margin-bottom: 2%;
+}
+
+.outbox{
+margin-bottom: 10%;
+} 
+
+

@@ -1,0 +1,49 @@
+.page{
+  background-image: linear-gradient( 109.6deg,  rgba(232,252,252,1) 11.2%, rgba(252,215,134,1) 56.2%, rgba(247,124,124,1) 100.2% );
+  background-size: cover;
+  padding: 100px;
+/*  padding-bottom: 50px;
+*/  padding-top: 60px;
+}
+
+
+#grouph1{
+  margin-bottom: 5%;
+}
+.jumbotron{
+  background-color: #212529;
+  color: white;
+
+}
+
+.outbox{
+  border: 2px solid black;
+  border-radius: 18px;
+  background-color: white;
+  width: 30%;
+
+}
+
+./*outbox{
+  display: grid;
+  grid-template-columns: 300px;
+  grid-template-rows: 210px 210px 80px;
+
+  border-radius: 18px;
+  border: 1px solid black;
+  box-shadow: 5px 5px 15px rgba(0,0,0,0.9);
+  font-family: roboto;
+  text-align: center;
+  margin-bottom: 2%;
+  margin-right: 2%;
+  padding: 2%;
+  height: 20%;
+}
+*/
+
+#description{
+  text-align: left;
+}
+
+
+
