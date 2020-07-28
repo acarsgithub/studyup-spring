@@ -6,13 +6,15 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-	<link rel="stylesheet" type="text/css" href="account.css">
+	<link rel="stylesheet" type="text/css" href="accountreq.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500&display=swap" rel="stylesheet">
+
 
 </head>
 <body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                <img src="https://img.icons8.com/cotton/40/000000/pen.png" style="margin-right: 8px;"/>
+                <img id="icon" src="https://img.icons8.com/cotton/40/000000/pen.png"/>
 
         <a class="navbar-brand" href="#">StudyUp</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,7 +25,7 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="#">Groups<span class="sr-only"></span></a>
             </li>
             <li class="nav-item">
@@ -48,28 +50,47 @@
 
 
 <div class="card">
+  
   <div class="info">
   <h1>John Doe</h1>
-  <p class="title">Email</p>
-  <p>Classrank</p>
+  <h3>Email</h3>
+  <h4>Classrank</h4>
   </div>
-      <li>Request 1<form action="" method="POST">
+
+      <ul> 
+      <li>Request 1:<span> some information </span><form class="form-line" action="" method="POST">
             <button type="button" href="" name="decline" class="btn btn-danger">Decline</button>
             <button type="button" href="" name="accept" class="btn btn-success">Accept</button>
         </form>
+        <hr>
     </li>
-      <li>Request 2<form action="" method="POST">
+      <li>Request 2:<span> some information </span><form class="form-line" action="" method="POST">
             <button type="button" href="" name="decline" class="btn btn-danger">Decline</button>
             <button type="button" href="" name="accept" class="btn btn-success">Accept</button>
-        </form></li>
-      <li>Request 3<form action="" method="POST">
+        </form>
+                <hr>
+
+      </li>
+      <li>Request 3:<span> some information </span>
+        <form class="form-line" action="" method="POST">
             <button type="button" href="" name="decline" class="btn btn-danger">Decline</button>
             <button type="button" href="" name="accept" class="btn btn-success">Accept</button>
-        </form></li>
-      <li>Request 4<form action="" method="POST">
+        </form>
+                <hr>
+
+      </li>
+      <li>Request 4:<span> some information </span>
+        <form class="form-line" action="" method="POST">
             <button type="button" href="" name="decline" class="btn btn-danger">Decline</button>
             <button type="button" href="" name="accept" class="btn btn-success">Accept</button>
-        </form></li>
+        </form>
+                <hr>
+
+      </li>
+
+      </ul>
+
+
 </div>
 
 

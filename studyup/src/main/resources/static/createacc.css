@@ -1,0 +1,20 @@
+.page{
+
+    font-family: 'Lora', serif;
+
+}
+
+body{
+	  background-color: #F7F9F9;
+
+}
+
+#icon{
+  margin-right: 8px;
+}
+
+
+.container-links{
+	display: flex;
+	justify-content: space-between;
+}

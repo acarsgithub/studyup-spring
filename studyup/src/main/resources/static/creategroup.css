@@ -1,0 +1,27 @@
+.page{
+
+    font-family: 'Lora', serif;
+
+}
+
+body{
+	  background-color: #F7F9F9;
+
+}
+
+h1{
+	text-align: center; 
+	margin-top: 5%;
+	margin-bottom: 30px;
+}
+
+
+.form-container{
+	width: 30%; 
+	margin: 30px auto; 
+}
+
+
+#icon{
+  margin-right: 8px;
+}

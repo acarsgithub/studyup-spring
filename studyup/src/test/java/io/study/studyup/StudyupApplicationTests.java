@@ -49,4 +49,28 @@ class StudyupApplicationTests {
 		Assert.isTrue(result.equals("<h2><center>Created New StudyUp Group Successfully!</center></h2>"));
 	}
 
+	@Test
+	@WithMockUser(username = "acarary", roles = {"USER"})
+	public void testCreateStudyGroup2() throws Exception {
+		// Creating object to store body message key-value pairs
+		Object randomObj = new Object() {
+			public final String groupname = "study4ever";
+			public final String subject = "MATH 1301";
+			public final String description = "We meet MWF @6pm in Buttrick";
+		};
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String json = objectMapper.writeValueAsString(randomObj);
+
+		// Testing post request to create a new user
+		String result = mockMvc.perform(MockMvcRequestBuilders.post("/create-group")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(json)
+				.accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andReturn().getResponse().getContentAsString();
+
+		Assert.isTrue(result.equals("<h2><center>Created New StudyUp Group Successfully!</center></h2>"));
+	}
+
 }

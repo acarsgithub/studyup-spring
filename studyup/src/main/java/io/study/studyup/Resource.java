@@ -1,13 +1,15 @@
 package io.study.studyup;
 
+import io.study.studyup.models.Group;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
 import javax.xml.transform.Result;
 import java.security.Principal;
 import java.sql.*;
+import java.util.ArrayList;
 
 @Controller
 public class Resource {
@@ -20,7 +22,7 @@ public class Resource {
      */
     @GetMapping("/")
     public String home(){
-        return "Welcome!!!!" ;
+        return "landing" ;
     }
 
     /*
@@ -308,13 +310,13 @@ public class Resource {
             the groupname, the subject of each group, and the description of each group
      */
     @GetMapping("/groups")
-    @ResponseBody
-    public String allGroupsHome(){
+    public String allGroupsHome(Model model){
 
         // Connection and statement for SQL database
         Connection conn = null;
         Statement stmt = null;
-        String groupInfoData = "";
+        ArrayList<Group> groups = new ArrayList<>();
+
 
         try {
             // Open connection and execute query
@@ -323,16 +325,27 @@ public class Resource {
             stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 
             // Get group information
-            String extractGroupInfo = "SELECT groupname, groupadmin_username, numusers, subject, description FROM studygroups";
+            String extractGroupInfo = "SELECT * FROM studygroups";
 
             // Formatting data
             if(stmt.execute(extractGroupInfo)) {
                 // Obtaining study group data from SQL database
                 ResultSet groupInfo = stmt.executeQuery(extractGroupInfo);
-
+                while(groupInfo.next()) {
+                    Group group = new Group();
+                    group.setGroupname(groupInfo.getString("groupname"));
+                    group.setGroupadmin_id(groupInfo.getInt("groupadmin_id"));
+                    group.setGroupadmin_username(groupInfo.getString("groupadmin_username"));
+                    group.setNumusers(groupInfo.getInt("numusers"));
+                    group.setSubject(groupInfo.getString("subject"));
+                    group.setDescription(groupInfo.getString("description"));
+                    groups.add(group);
+                }
                 // Accessing helper method to create table
-                groupInfoData = viewTable(groupInfo, "<h2><center>Study Groups</center></h2>");
-                groupInfo.close();
+                // groupInfoData = viewTable(groupInfo, "<h2><center>Study Groups</center></h2>");
+                // groupInfo.close();
+                model.addAttribute("allGroups", groups);
+                return "groups";
             }
 
 
@@ -346,7 +359,7 @@ public class Resource {
         }
 
         // Account added successfully
-        return groupInfoData;
+        return "groups";
     }
 
 

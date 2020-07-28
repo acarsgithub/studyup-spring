@@ -11,8 +11,9 @@
 
 </head>
 <body>
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                <img src="https://img.icons8.com/cotton/40/000000/pen.png" style="margin-right: 8px;"/>
+                <img id="icon" src="https://img.icons8.com/cotton/40/000000/pen.png"/>
 
         <a class="navbar-brand" href="#">StudyUp</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,7 +24,7 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="#">Groups<span class="sr-only"></span></a>
             </li>
             <li class="nav-item">
@@ -42,84 +43,46 @@
 
 </nav>
 
-
-<div class="page">
-
-     <header class="jumbotron">
-         <div class="jumbocontainer">
-             <h1></span> Welcome To StudyUp!</h1>
-             <p>Find a study group to join below!</p>
-             <p>
-                <a class="btn btn-primary btn-lg" href="/create-group">Create New Study Group</a>
-             </p>
-         </div>
-     </header>
-     
-     <div class="row text-center flex-wrap" id="studygroup-grid">
-<!--         for each entry
- -->            
-
-
- <div class="col-md-4 col-sm-6 outbox">
-                <div class="scard ">
-                   <div class="caption">
-                       <h3>Group Name</h3>
-                       <p>Some Info<p>
-                       <p>Some Info<p>
-                       <p id="description" >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                       quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                       consequat. <p>
-                   </div>
-                   <p>
-                       <a href="..." class="btn btn-primary">More Info</a>
-                   </p>
-                </div>
-            </div>
-
-
-<div class="col-md-4 col-sm-6 outbox">
-                <div class="scard ">
-                   <div class="caption">
-                       <h3>Group Name</h3>
-                       <p>Some Info<p>
-                       <p>Some Info<p>
-                       <p id="description" >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                       quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                       consequat. <p>
-                   </div>
-                   <p>
-                       <a href="..." class="btn btn-primary">More Info</a>
-                   </p>
-                </div>
-            </div>
-
-
-            <div class="col-md-4 col-sm-6 outbox">
-                <div class="scard ">
-                   <div class="caption">
-                       <h3>Group Name</h3>
-                       <p>Some Info<p>
-                       <p>Some Info<p>
-                       <p id="description" >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                       quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                       consequat. <p>
-                   </div>
-                   <p>
-                       <a href="..." class="btn btn-primary">More Info</a>
-                   </p>
-                </div>
-            </div>
-
-
-
-<!--             close loop
- -->
-    </div>
+<div class="container">
+  <div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">Find active study groups:</h1>
+    <p class="lead">This page shows all the available groups that can be joined!</p>
+    <button href="" class="btn btn-primary">Create a new group</button>
+  </div>
+</div>
 </div>
 
+
+
+
+
+
+<div class="page">
+  <div class="row" >
+
+            <th:block th:each="group : ${allGroups}">
+                <div class=" col-lg-4 col-md-6 col-sm-12 outbox">
+                    <div class="scard ">
+                       <div class="caption">
+                           <div class="groupname">
+                                <h3 class="groupname" th:text="${group.groupname}">Group Name</h3>
+                            </div>
+
+                          <div class="groupinfo">
+                               <p th:text="${group.groupadmin_username}">Group Admin<p>
+                               <p th:text="${group.numusers}">Group Member Count<p>
+                               <p id="description" th:text="${group.description}">Group Description</p>
+                           </div>
+
+                            <p><a id="apply" href="..." class="btn btn-primary">Join</a></p>
+
+                       </div>
+                    </div>
+                </div>
+            </th:block>
+    </div>
+</div>
 
 </body>
 </html>

@@ -1,0 +1,75 @@
+#icon{
+  margin-right: 8px;
+}
+
+body{
+  background-color: #F7F9F9;
+}
+
+
+.page{
+    font-family: 'Lora', serif;
+    display: flex;
+	justify-content: center;
+	align-items: center;
+
+}
+
+.card{
+	margin: 110px;
+	max-width: 600px;
+
+	text-align: left;
+	border: 2px solid black;
+	border-radius: 5px;
+	box-shadow: 5px 5px #888888;
+}
+
+.wrap{
+	display: flex;
+	justify-content: center;
+}
+
+#join{
+  width:50%;
+  border-radius: 0;
+  background: #59D61C;
+}
+
+
+#leave{
+    width:50%;
+    border-radius: 0;
+
+
+}
+
+#leave:hover{
+  width:70%;
+}
+
+#join:hover{
+  width:70%;
+}
+
+.button-icon{
+  padding-left: 50px;
+}
+
+p{
+	padding-left: 10px;
+	padding-top: 10px;
+	padding-right: 5px;
+}
+
+.name{
+	background:#343a40;
+	padding: 10px;
+	text-align: center;
+
+}
+
+h1{
+	  color:#F4F6F7;
+
+}

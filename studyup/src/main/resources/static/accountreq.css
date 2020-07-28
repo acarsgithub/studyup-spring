@@ -1,0 +1,53 @@
+#icon{
+  margin-right: 8px;
+}
+
+body{
+  background-color: #F7F9F9;
+}
+
+
+.page{
+    font-family: 'Lora', serif;
+
+}
+
+.card{
+	max-width: 45%;
+	margin-left: 27.5%;
+	margin-right: 27.5%;
+	margin-top:8%;
+	margin-bottom: 10%;
+	display: flex;
+	justify-content: center;
+
+	border:2px solid black;
+	border-radius: 5px;
+  box-shadow: 5px 5px #888888;
+
+}
+
+.form-line{
+/*	display: flex;
+	justify-content: right;*/
+	margin-left: 55%;
+
+}
+
+
+/*li{
+	display: flex;
+
+}*/
+
+.info{
+	padding: 10px 0 10px 10px;
+  margin: 0;
+
+  background-color: #343a40; 
+  color:#F4F6F7;
+}
+
+ul{
+	margin-top: 10px;
+}

@@ -3,7 +3,6 @@ package io.study.studyup.models;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "User")
 public class User {
 
     @Id

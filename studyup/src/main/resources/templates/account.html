@@ -6,13 +6,17 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-	<link rel="stylesheet" type="text/css" href="groups.css">
+	<link rel="stylesheet" type="text/css" href="account.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500&display=swap" rel="stylesheet">
+
+
+
 
 </head>
 <body>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                <img src="https://img.icons8.com/cotton/40/000000/pen.png" style="margin-right: 8px;"/>
+                <img id="icon" src="https://img.icons8.com/cotton/40/000000/pen.png"/>
 
         <a class="navbar-brand" href="#">StudyUp</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,7 +27,7 @@
 
         <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="#">Groups<span class="sr-only"></span></a>
             </li>
             <li class="nav-item">
@@ -42,73 +46,187 @@
 
 </nav>
 
+<div class="container">
+  <div class="jumbotron jumbotron-fluid">
+  <div class="container">
+    <h1 class="display-4">Groups that you belong to:</h1>
+    <p class="lead">This page shows all the groups in which you are a member</p>
+    <button class="btn btn-primary">View Join Requests</button>
+  </div>
+</div>
+</div>
+
+
+
+
+
 
 <div class="page">
 
 
-
-<h1 id="grouph1">Groups you belong to: </h1>
-
-
-
-
-
-
-  <div class="row text-center flex-wrap" id="studygroup-grid">
+  <div class="row" >
 <!--         for each entry
  -->            
 
 
- <div class="col-md-4 col-sm-6 outbox">
+ <div class=" col-lg-4 col-md-6 col-sm-12 outbox">
                 <div class="scard ">
                    <div class="caption">
-                       <h3>Group Name</h3>
+
+                        <div class="groupname">
+                       <h3 class="groupname">Group Name</h3>
+                     </div>
+
+                      <div class="groupinfo">
                        <p>Some Info<p>
                        <p>Some Info<p>
                        <p id="description" >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                       consequat. <p>
+                       consequat. </p>
+                       </div>
+
+
+                
+
                    </div>
-                   <p>
-                       <a href="..." class="btn btn-primary">More Info</a>
+              
+                </div>
+
+                <div class="wrap">
+                      
+                       <a id="view" href="..." class="btn btn-success">View</a>
+                   
+                   
+                       <a id="leave" href="..." class="btn btn-danger">Leave</a>
+                  
+
+                 </div>
+            </div>
+
+
+<div class=" col-lg-4 col-md-6 col-sm-12 outbox">
+                <div class="scard ">
+                   <div class="caption">
+
+                        <div class="groupname">
+                       <h3 class="groupname">Group Name</h3>
+                     </div>
+
+                      <div class="groupinfo">
+                       <p>Some Info<p>
+                       <p>Some Info<p>
+                       <p id="description" >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                       quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                       consequat. </p>
+                       </div>
+
+
+                
+
+                   </div>
+              
+                </div>
+
+                <div class="wrap">
+                      
+                       <a id="view" href="..." class="btn btn-success">View</a>
+                   
+                   
+                       <a id="leave" href="..." class="btn btn-danger">Leave</a>
+                  
+
+                 </div>
+            </div>
+
+
+            <div class=" col-lg-4 col-md-6 col-sm-12 outbox">
+                <div class="scard ">
+                   <div class="caption">
+
+                        <div class="groupname">
+                       <h3 class="groupname">Group Name</h3>
+                     </div>
+
+                      <div class="groupinfo">
+                       <p>Some Info<p>
+                       <p>Some Info<p>
+                       <p id="description" >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                       quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                       consequat. </p>
+                       </div>
+
+
+                
+
+                   </div>
+              
+                </div>
+
+                <div class="wrap">
+                      
+                       <a id="view" href="..." class="btn btn-success">View<img class="button-icon" src="https://img.icons8.com/android/20/000000/long-arrow-right.png"/></a>
+                   
+                   
+                       <a id="leave" href="..." class="btn btn-danger">Leave<img class="button-icon" src="https://img.icons8.com/material/20/000000/circled-x.png"/></a>
+                  
+
+                 </div>
+            </div>
+
+
+
+
+            <div class=" col-lg-4 col-md-6 col-sm-12 outbox">
+                <div class="scard ">
+                   <div class="caption">
+
+                        <div class="groupname">
+                       <h3 class="groupname">Group Name</h3>
+                     </div>
+
+                      <div class="groupinfo">
+                       <p>Some Info<p>
+                       <p>Some Info<p>
+                       <p id="description" >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                       quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                       consequat. </p>
+                       </div>
+                      <p>
+                       <a id="apply" href="..." class="btn btn-primary">View</a>
                    </p>
+
+                   </div>
+              
                 </div>
             </div>
 
 
-<div class="col-md-4 col-sm-6 outbox">
+            <div class=" col-lg-4 col-md-6 col-sm-12 outbox">
                 <div class="scard ">
                    <div class="caption">
-                       <h3>Group Name</h3>
+
+                        <div class="groupname">
+                       <h3 class="groupname">Group Name</h3>
+                     </div>
+
+                      <div class="groupinfo">
                        <p>Some Info<p>
                        <p>Some Info<p>
                        <p id="description" >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                       consequat. <p>
-                   </div>
-                   <p>
-                       <a href="..." class="btn btn-primary">More Info</a>
+                       consequat. </p>
+                       </div>
+                      <p>
+                       <a id="apply" href="..." class="btn btn-primary">View</a>
                    </p>
-                </div>
-            </div>
 
-
-            <div class="col-md-4 col-sm-6 outbox">
-                <div class="scard ">
-                   <div class="caption">
-                       <h3>Group Name</h3>
-                       <p>Some Info<p>
-                       <p>Some Info<p>
-                       <p id="description" >Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                       tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                       quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                       consequat. <p>
                    </div>
-                   <p>
-                       <a href="..." class="btn btn-primary">More Info</a>
-                   </p>
+              
                 </div>
             </div>
 
@@ -120,6 +238,8 @@
 
 
     </div>
+
+  </div>
 
 
 </body>
