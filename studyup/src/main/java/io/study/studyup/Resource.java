@@ -6,6 +6,9 @@ import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.Result;
 import java.security.Principal;
 import java.sql.*;
@@ -192,6 +195,15 @@ public class Resource {
 
 
     /*
+        Method: createNewGroupGet
+     */
+    @GetMapping("/create-group")
+    public String createNewGroupGet(){
+        return "creategroup";
+    }
+
+
+    /*
         Method: createNewGroup
         Purpose: this will allow the logged in user to create a new group and will place him as the admin of the group
         RequestBody jsonStr - this json will store 3 key-value pairs
@@ -204,13 +216,13 @@ public class Resource {
      */
     @PostMapping("/create-group")
     @ResponseBody
-    public String createNewGroup(@RequestBody String jsonStr, Principal principal) throws JSONException {
+    public String createNewGroup(HttpServletRequest request, HttpServletResponse response/*@RequestBody String jsonStr*/, Principal principal) throws JSONException {
 
         // parsing json object
-        JSONObject json = new JSONObject(jsonStr);
-        String groupname = json.getString("groupname");
-        String subject = json.getString("subject");
-        String description = json.getString("description");
+        // JSONObject json = new JSONObject(jsonStr);
+        String groupname = request.getParameter("groupname");
+        String subject = request.getParameter("subject");
+        String description = request.getParameter("description");
 
         // Gets the username of the logged in individual
         String curUser = principal.getName();
