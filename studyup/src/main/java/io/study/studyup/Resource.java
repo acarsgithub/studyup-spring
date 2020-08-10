@@ -24,8 +24,16 @@ public class Resource {
         Purpose: temporary homepage for everyone to access when introduced to app
      */
     @GetMapping("/")
-    public String home(){
+    public String home() {
         return "landing" ;
+    }
+
+    /*
+        Method: createAccountGet
+     */
+    @GetMapping("/signup")
+    public String createAccountGet(){
+        return "createacc";
     }
 
     /*
@@ -42,15 +50,14 @@ public class Resource {
      */
     @PostMapping("/signup")
     @ResponseBody
-    public String createAccount(@RequestBody String jsonStr) throws JSONException {
+    public String createAccount(HttpServletRequest request) throws JSONException {
 
         // parsing json object
         // signing up requires username, password, email, and classrank
-        JSONObject json = new JSONObject(jsonStr);
-        String username = json.getString("username");
-        String password = json.getString("password");
-        String email = json.getString("email");
-        String classrank = json.getString("classrank"); // classrank should be FRESHMAN, SOPHOMORE, JUNIOR, or SENIOR
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String email = request.getParameter("email");
+        String classrank = request.getParameter("classrank"); // classrank should be FRESHMAN, SOPHOMORE, JUNIOR, or SENIOR
 
         // prepared statement used to prevent SQL injection execution
         PreparedStatement update = null;
