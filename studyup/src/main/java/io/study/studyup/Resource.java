@@ -28,8 +28,20 @@ public class Resource {
         return "landing" ;
     }
 
+
+    /*
+        Method: login
+        Purpose: Get method that redirects to custom login form
+     */
+    @GetMapping("/login")
+    public String loginGet(){
+        return "login";
+    }
+
+
     /*
         Method: createAccountGet
+        Purpose: Get method that redirects to the create account file
      */
     @GetMapping("/signup")
     public String createAccountGet(){
@@ -46,13 +58,12 @@ public class Resource {
                      --- classrank of user creating account (has to be FRESHMAN, SOPHOMORE, JUNIOR, SENIOR)
         Conditionals: the username and email cannot already be taken
 
-        NEEDED: forcing user to input secure password, must actually hash the password, validating classrank
+        NEEDED: forcing user to input secure password, must actually hash the password, validating classrank000
      */
     @PostMapping("/signup")
     @ResponseBody
     public String createAccount(HttpServletRequest request) throws JSONException {
 
-        // parsing json object
         // signing up requires username, password, email, and classrank
         String username = request.getParameter("username");
         String password = request.getParameter("password");
@@ -465,7 +476,7 @@ public class Resource {
     /*
         Method: userRequests
         Purpose: this method will display all requests a user has (if they are an admin of any groups) and will allow them
-            to accept of decline requests depending on if optional parameters are passed in
+            to accept or decline requests depending on if optional parameters are passed in
         PathVariable username - the username of the person's requests to see.. MUST BE logged in user or access forbidden
         Principal - the currently logged in user
         OptionalRequestParam requestUserID - this is the requesterID the user will be accepting/rejecting to group
