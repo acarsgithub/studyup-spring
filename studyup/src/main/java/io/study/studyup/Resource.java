@@ -9,21 +9,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.security.Principal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// TODO NEED TO FINISH REQUEST MADE TO DATABASE SECTION, SHOW REQUESTS IN USERNAME PROFILE, AND FIX DATABASE ENTRIES
-// TODO FOR MODIFICATIONS MADE TO ASSOCIATIONS AND REQUESTS TABLES
+// TODO SHOW REQUESTS IN USERNAME PROFILE, AND FIX DATABASE ENTRIES FOR MODIFICATIONS MADE TO ASSOCIATIONS AND REQUESTS TABLES
 
 @Controller
 public class Resource {
 
     final String pass = "";
 
-    // hashmap to store all requests associated to each admin id
+    // hashmap to store all requests associated to each admin username
     HashMap<String, ArrayList<Request>> allRequests = new HashMap<>();
 
     /*
@@ -58,18 +56,20 @@ public class Resource {
     /*
         Method: signup
         Purpose: this method will allow for an individual to create an account with studyup
-        RequestBody jsonStr - this parameter is a json datatype that should store 4 key-value pairs
+        HttpServletRequest request - this object should store 4 parameters
                      --- username of user creating account
                      --- password of user creating account
                      --- email of user creating account
-                     --- classrank of user creating account (has to be FRESHMAN, SOPHOMORE, JUNIOR, SENIOR)
+                     --- classrank of user creating account (FRESHMAN, SOPHOMORE, JUNIOR, SENIOR)
         Conditionals: the username and email cannot already be taken
 
-        NEEDED: forcing user to input secure password, must actually hash the password, validating classrank000
+        TODO: forcing user to input secure password, must actually hash the password, validating classrank
      */
     @PostMapping("/signup")
     @ResponseBody
     public String createAccount(HttpServletRequest request) throws JSONException {
+
+        // TODO make sure all fields are included!! from the post form
 
         // signing up requires username, password, email, and classrank
         String username = request.getParameter("username");
@@ -114,7 +114,6 @@ public class Resource {
             update.setString(4, classrank);
             update.executeUpdate();
 
-
             // add to hashmap with new arraylist of requests as the value
             allRequests.put(username, new ArrayList<>());
 
@@ -135,11 +134,11 @@ public class Resource {
 
     /*
         Method: requestSend
-        Purpose: this method will allow users to request joining a studygroup
-        RequestBody jsonStr - this json will store one key-value pair
-                    --- groupname - the group the user is requesting to join
+        Purpose: this method will do validation of request made to group and store request into hashmap list and database
+        Principal - the currently logged in user
+        PathVariable groupname - the nme of the groupname the currently logged in user is requesting to join
 
-        NEEDED: must ensure groupname is properly typed in and a groupname that actually exists
+        TODO: must ensure groupname is properly typed in and a groupname that actually exists
      */
     @PostMapping("/request-group/{groupname}")
     @ResponseBody
@@ -148,6 +147,9 @@ public class Resource {
         // prepared statement used to prevent SQL injection execution
         PreparedStatement obtainGroupAdminPS = null;
         PreparedStatement obtainUsersOfGroupPS = null;
+        PreparedStatement obtainGroupInfoPS = null;
+        PreparedStatement obtainRequestIDPS = null;
+        PreparedStatement requestDatabasePS = null;
 
         // Connection and statement for SQL database
         Connection conn = null;
@@ -156,6 +158,9 @@ public class Resource {
         // Variables to store information on group admin and requester
         String groupAdminUsername = "";
         String requesterUsername = principal.getName();
+        int group_id = -1;
+        int groupadmin_id = -1;
+        int requester_id = -1;
 
         try {
 
@@ -181,7 +186,6 @@ public class Resource {
                 ArrayList<Request> groupRequestsList = allRequests.get(groupAdminUsername);
 
                 // checking all requests in the list to ensure the user has not already requested this group
-                // TODO must add users to requests list and to database of requests later
                 for(Request req: groupRequestsList){
                     if(req.getRequester_username().equals(requesterUsername)){
                         return "<h1>You have already sent a request to this group!</h1>";
@@ -208,7 +212,37 @@ public class Resource {
                 req.setRequester_username(requesterUsername);
                 allRequests.get(groupAdminUsername).add(req);
 
-                // TODO get all pertinent information for request entry in database to be made
+
+                // Getting groupId and groupAdminID for database entry
+                String getGroupID = "SELECT groupid, groupadmin_id FROM studygroups WHERE groupname = ?";
+                obtainGroupInfoPS = conn.prepareStatement(getGroupID);
+                obtainGroupInfoPS.setString(1, groupname);
+                ResultSet groupInfoRS = obtainGroupInfoPS.executeQuery();
+                while(groupInfoRS.next()){
+                    group_id = groupInfoRS.getInt("group_id");
+                    groupadmin_id = groupInfoRS.getInt("groupadmin_id");
+                }
+
+                // getting request user id
+                String requestId = "SELECT id FROM user WHERE username = ?";
+                obtainRequestIDPS = conn.prepareStatement(requestId);
+                obtainRequestIDPS.setString(1, requesterUsername);
+                ResultSet requestIDRS = obtainRequestIDPS.executeQuery();
+                while(requestIDRS.next()){
+                    requester_id = requestIDRS.getInt("id");
+                }
+
+                // Inserting info into requests table
+                String requestAdditionSQL = "INSERT INTO requests(`groupname`, `group_id`, `groupadmin_username`, `groupadmin_id`, `requestuserid`, `requestusername`) " +
+                        " VALUES (?, ?, ?, ?, ?, ?)";
+                requestDatabasePS = conn.prepareStatement(requestAdditionSQL);
+                requestDatabasePS.setString(1, groupname);
+                requestDatabasePS.setInt(2, group_id);
+                requestDatabasePS.setString(3, groupAdminUsername);
+                requestDatabasePS.setInt(4, groupadmin_id);
+                requestDatabasePS.setInt(5, requester_id);
+                requestDatabasePS.setString(6, requesterUsername);
+                requestDatabasePS.executeQuery();
 
 
             } else {
@@ -222,6 +256,7 @@ public class Resource {
 
     /*
         Method: createNewGroupGet
+        Purpose: the get request triggers the creategroup HTML
      */
     @GetMapping("/create-group")
     public String createNewGroupGet(){
@@ -232,19 +267,19 @@ public class Resource {
     /*
         Method: createNewGroup
         Purpose: this will allow the logged in user to create a new group and will place him as the admin of the group
-        RequestBody jsonStr - this json will store 3 key-value pairs
+        HttpServletRequest request - this object will store 3 parameters from post form
                     --- groupname will be the name of the group the user wants to create (should be unique)
                     --- subject will be the subject the studygroup will associate with
                     --- description should contain date and time of meetings and extra stuff the user mentions
         Principal -  this will be the currently logged in user
 
-        NEEDED: ensure subject is a valid subject of classes at each university
+        TODO: ensure subject is a valid subject of classes at each university
      */
     @PostMapping("/create-group")
     @ResponseBody
-    public String createNewGroup(HttpServletRequest request, HttpServletResponse response/*@RequestBody String jsonStr*/, Principal principal) throws JSONException {
+    public String createNewGroup(HttpServletRequest request, Principal principal) {
 
-        // parsing json object
+        // parsing parameters from request object
         String groupname = request.getParameter("groupname");
         String subject = request.getParameter("subject");
         String description = request.getParameter("description");
@@ -320,11 +355,12 @@ public class Resource {
             }
 
             // Adding admin to associations using prepared statement to prevent SQL Injection
-            String adminAssoc = "INSERT INTO associations(`groupid`, `userid`, `username`, `roles`) VALUES (?, ?, ?, 'ROLE_ADMIN')";
+            String adminAssoc = "INSERT INTO associations(`groupname`, `groupid`, `userid`, `username`, `roles`) VALUES (?, ?, ?, ?, 'ROLE_ADMIN')";
             associationPS = conn.prepareStatement(adminAssoc);
-            associationPS.setInt(1, groupID);
-            associationPS.setInt(2, realAdminID);
-            associationPS.setString(3, groupname);
+            associationPS.setString(1, groupname);
+            associationPS.setInt(2, groupID);
+            associationPS.setInt(3, realAdminID);
+            associationPS.setString(4, groupname);
             associationPS.executeUpdate();
 
 
@@ -401,10 +437,13 @@ public class Resource {
 
 
     /*
+
         Method: userHome
         Purpose: this method will return  all groups associated with the user to show the user all the active groups they are in
         Principal - the currently logged in user
         PathVariable username - the username of the person's groups to display... MUST BE currently logged in user or access is restricted
+
+        // TODO display requests that a user has from hashmap and add to model to parse in HTML file later
      */
     @GetMapping("/{username}")
     public String userHome(@PathVariable("username") String username, Principal principal, Model model){
@@ -511,7 +550,7 @@ public class Resource {
         OptionalRequestParam decision - this is the decision of the user for the requester and the group
 
 
-        NEEDED: check all 3 optional parameters, ensure groupID and requesterID are associated in requests table,
+        TODO: check all 3 optional parameters, ensure groupID and requesterID are associated in requests table,
             possibly convert to POST method
 
      */
