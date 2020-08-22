@@ -29,15 +29,21 @@ CREATE TABLE studygroups (
 
 DROP TABLE If EXISTS requests;
 CREATE TABLE requests (
+	  groupname					VARCHAR(255)		NOT NULL,
 	  groupid       			int 	    		NOT NULL,
       groupadmin_id				int					NOT NULL,
-	  requestuserid				int 				NOT NULL
+      groupadmin_username		VARCHAR(255) 		NOT NULL,
+	  requestuserid				int 				NOT NULL,
+      requestusername			VARCHAR(255) 		NOT NULL
 );
 
 
 DROP TABLE If EXISTS associations;
 CREATE TABLE associations (
+	  groupname					VARCHAR(255)		NOT NULL,
 	  groupid       			int 	    		NOT NULL,
       userid					int					NOT NULL,
+      username					VARCHAR(255) 		NOT NULL,
 	  roles						VARCHAR(255)		CHECK(roles IN('ROLE_USER', 'ROLE_ADMIN'))
 );
+

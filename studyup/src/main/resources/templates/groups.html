@@ -75,7 +75,9 @@
                                <p id="description" th:text="${group.description}">Group Description</p>
                            </div>
 
-                            <p><a id="apply" href="..." class="btn btn-primary">Join</a></p>
+                           <form th:action="@{'/request-group/' + ${group.groupname}}" method="POST">
+                                <button type="submit"><a id="apply" class="btn btn-primary">Join</a></button>
+                           </form>
 
                        </div>
                     </div>
