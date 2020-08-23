@@ -14,15 +14,12 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// TODO SHOW REQUESTS IN USERNAME PROFILE, AND FIX DATABASE ENTRIES FOR MODIFICATIONS MADE TO ASSOCIATIONS AND REQUESTS TABLES
+// TODO ALLOW USER TO ACCEPT OR DECLINE REQUESTS FROM MAIN PROFILE PAGE
 
 @Controller
 public class Resource {
 
     final String pass = "";
-
-    // hashmap to store all requests associated to each admin username
-    HashMap<String, ArrayList<Request>> allRequests = new HashMap<>();
 
     /*
         Method: home
@@ -50,6 +47,7 @@ public class Resource {
      */
     @GetMapping("/signup")
     public String createAccountGet(){
+        System.out.println("Here!");
         return "createacc";
     }
 
@@ -67,10 +65,10 @@ public class Resource {
      */
     @PostMapping("/signup")
     @ResponseBody
-    public String createAccount(HttpServletRequest request) throws JSONException {
+    public String createAccount(HttpServletRequest request) {
 
         // TODO make sure all fields are included!! from the post form
-
+        System.out.println("Here2!");
         // signing up requires username, password, email, and classrank
         String username = request.getParameter("username");
         String password = request.getParameter("password");
@@ -102,6 +100,8 @@ public class Resource {
                 }
             }
 
+            System.out.println("Here3!");
+
             // If it is a new account, add to database
             String addAccount = "INSERT INTO user(`email`, `username`, `active`, `password`, `classrank`, `roles`) " +
                     " VALUES (?, ?, TRUE, ?, ?, 'ROLE_USER')";
@@ -113,9 +113,6 @@ public class Resource {
             update.setString(3, password);
             update.setString(4, classrank);
             update.executeUpdate();
-
-            // add to hashmap with new arraylist of requests as the value
-            allRequests.put(username, new ArrayList<>());
 
 
         } catch (Exception se) { se.printStackTrace(); }
@@ -150,6 +147,7 @@ public class Resource {
         PreparedStatement obtainGroupInfoPS = null;
         PreparedStatement obtainRequestIDPS = null;
         PreparedStatement requestDatabasePS = null;
+        PreparedStatement requesterExtractionPS = null;
 
         // Connection and statement for SQL database
         Connection conn = null;
@@ -179,75 +177,66 @@ public class Resource {
                 groupAdminUsername = adminIDRetrieval.getString("groupadmin_username");
             }
 
-            // Determining if username exists in the hashmap, usually always should
-            if(allRequests.containsKey(groupAdminUsername)){
 
-                // obtaining group requests list from hashmap
-                ArrayList<Request> groupRequestsList = allRequests.get(groupAdminUsername);
+            // obtaining group requests and storing all requests into a list
 
-                // checking all requests in the list to ensure the user has not already requested this group
-                for(Request req: groupRequestsList){
-                    if(req.getRequester_username().equals(requesterUsername)){
-                        return "<h1>You have already sent a request to this group!</h1>";
-                    }
+            String obtainRequesters = "SELECT requestusername FROM requests WHERE groupname = ?";
+            requesterExtractionPS = conn.prepareStatement(obtainRequesters);
+            requesterExtractionPS.setString(1, groupname);
+            ResultSet requesters = requesterExtractionPS.executeQuery();
+
+            // checking all requests for group to ensure the user has not already requested this group
+            while(requesters.next()){
+                if(requesters.getString("requestusername").equals(requesterUsername)){
+                    return "<h1>You have already sent a request to this group!</h1>";
                 }
-
-                // checking if user is already a member of group they want to request to
-                String allUserOfGroup = "SELECT username FROM associations WHERE groupname = ?";
-                obtainUsersOfGroupPS = conn.prepareStatement(allUserOfGroup);
-                obtainUsersOfGroupPS.setString(1, groupname);
-                ResultSet users = obtainUsersOfGroupPS.executeQuery();
-
-                while(users.next()){
-                    if(users.getString("username").equals(requesterUsername)){
-                        return "<h1>You are already a member of this group!</h1>";
-                    }
-                }
-
-                // User is clear to request!
-                // Adding request to list associated with group admin username for later reference
-                Request req = new Request();
-                req.setGroupadmin_username(groupAdminUsername);
-                req.setGroupname(groupname);
-                req.setRequester_username(requesterUsername);
-                allRequests.get(groupAdminUsername).add(req);
-
-
-                // Getting groupId and groupAdminID for database entry
-                String getGroupID = "SELECT groupid, groupadmin_id FROM studygroups WHERE groupname = ?";
-                obtainGroupInfoPS = conn.prepareStatement(getGroupID);
-                obtainGroupInfoPS.setString(1, groupname);
-                ResultSet groupInfoRS = obtainGroupInfoPS.executeQuery();
-                while(groupInfoRS.next()){
-                    group_id = groupInfoRS.getInt("group_id");
-                    groupadmin_id = groupInfoRS.getInt("groupadmin_id");
-                }
-
-                // getting request user id
-                String requestId = "SELECT id FROM user WHERE username = ?";
-                obtainRequestIDPS = conn.prepareStatement(requestId);
-                obtainRequestIDPS.setString(1, requesterUsername);
-                ResultSet requestIDRS = obtainRequestIDPS.executeQuery();
-                while(requestIDRS.next()){
-                    requester_id = requestIDRS.getInt("id");
-                }
-
-                // Inserting info into requests table
-                String requestAdditionSQL = "INSERT INTO requests(`groupname`, `group_id`, `groupadmin_username`, `groupadmin_id`, `requestuserid`, `requestusername`) " +
-                        " VALUES (?, ?, ?, ?, ?, ?)";
-                requestDatabasePS = conn.prepareStatement(requestAdditionSQL);
-                requestDatabasePS.setString(1, groupname);
-                requestDatabasePS.setInt(2, group_id);
-                requestDatabasePS.setString(3, groupAdminUsername);
-                requestDatabasePS.setInt(4, groupadmin_id);
-                requestDatabasePS.setInt(5, requester_id);
-                requestDatabasePS.setString(6, requesterUsername);
-                requestDatabasePS.executeQuery();
-
-
-            } else {
-                return "<h1>Could not find username identity tied to the group that you are attempting to request to!</h1>";
             }
+
+            // checking if user is already a member of group they want to request to
+            String allUserOfGroup = "SELECT username FROM associations WHERE groupname = ?";
+            obtainUsersOfGroupPS = conn.prepareStatement(allUserOfGroup);
+            obtainUsersOfGroupPS.setString(1, groupname);
+            ResultSet users = obtainUsersOfGroupPS.executeQuery();
+
+            while(users.next()){
+                if(users.getString("username").equals(requesterUsername)){
+                    return "<h1>You are already a member of this group!</h1>";
+                }
+            }
+
+            // User is clear to request!
+            // Getting groupId and groupAdminID for database entry
+            String getGroupID = "SELECT groupid, groupadmin_id FROM studygroups WHERE groupname = ?";
+            obtainGroupInfoPS = conn.prepareStatement(getGroupID);
+            obtainGroupInfoPS.setString(1, groupname);
+            ResultSet groupInfoRS = obtainGroupInfoPS.executeQuery();
+            while(groupInfoRS.next()){
+                group_id = groupInfoRS.getInt("groupid");
+                groupadmin_id = groupInfoRS.getInt("groupadmin_id");
+            }
+
+            // getting request user id
+            String requestId = "SELECT id FROM user WHERE username = ?";
+            obtainRequestIDPS = conn.prepareStatement(requestId);
+            obtainRequestIDPS.setString(1, requesterUsername);
+            ResultSet requestIDRS = obtainRequestIDPS.executeQuery();
+            while(requestIDRS.next()){
+                requester_id = requestIDRS.getInt("id");
+            }
+
+            // Inserting info into requests table
+            String requestAdditionSQL = "INSERT INTO requests(`groupname`, `groupid`, `groupadmin_username`, `groupadmin_id`, `requestuserid`, `requestusername`) " +
+                    " VALUES (?, ?, ?, ?, ?, ?)";
+            requestDatabasePS = conn.prepareStatement(requestAdditionSQL);
+            requestDatabasePS.setString(1, groupname);
+            requestDatabasePS.setInt(2, group_id);
+            requestDatabasePS.setString(3, groupAdminUsername);
+            requestDatabasePS.setInt(4, groupadmin_id);
+            requestDatabasePS.setInt(5, requester_id);
+            requestDatabasePS.setString(6, requesterUsername);
+            requestDatabasePS.executeUpdate();
+
+
         } catch (Exception se) { se.printStackTrace(); }
 
         return "<h1>Request was successful!</h1>";
@@ -360,7 +349,7 @@ public class Resource {
             associationPS.setString(1, groupname);
             associationPS.setInt(2, groupID);
             associationPS.setInt(3, realAdminID);
-            associationPS.setString(4, groupname);
+            associationPS.setString(4, principal.getName());
             associationPS.executeUpdate();
 
 
@@ -443,7 +432,6 @@ public class Resource {
         Principal - the currently logged in user
         PathVariable username - the username of the person's groups to display... MUST BE currently logged in user or access is restricted
 
-        // TODO display requests that a user has from hashmap and add to model to parse in HTML file later
      */
     @GetMapping("/{username}")
     public String userHome(@PathVariable("username") String username, Principal principal, Model model){
@@ -456,7 +444,7 @@ public class Resource {
         ArrayList<Group> userActiveGroups = new ArrayList<>();
 
         // stores all requests made to admin's groups
-        ArrayList<Group> requestsMadeToAdmin = new ArrayList<>();
+        ArrayList<Request> requestsMadeToAdmin = new ArrayList<>();
 
         // Getting logged in username
         String loggedInUser = principal.getName();
@@ -464,6 +452,7 @@ public class Resource {
         // Prepared statements to prevent SQL Injection
         PreparedStatement getIDPS = null;
         PreparedStatement getGroupIDPS = null;
+        PreparedStatement getAdminRequests = null;
 
         // Variable for data storage later
         int id = -1;
@@ -488,6 +477,20 @@ public class Resource {
             // Getting actual id and storing it
             while(userIDSet.next()){
                 id = userIDSet.getInt("id");
+            }
+
+            // obtaining all requests from SQL database for principal
+            // creating request objects out of those requests and adding them to a list
+            String obtainRequests = "SELECT groupname, requestusername FROM requests WHERE groupadmin_username = ?";
+            getAdminRequests = conn.prepareStatement(obtainRequests);
+            getAdminRequests.setString(1, username);
+            ResultSet allRequests = getAdminRequests.executeQuery();
+            while(allRequests.next()){
+                Request req = new Request();
+                req.setRequester_username(allRequests.getString("requestusername"));
+                req.setGroupname(allRequests.getString("groupname"));
+                req.setGroupadmin_username(username);
+                requestsMadeToAdmin.add(req);
             }
 
             // Getting groupID's of all groups associated with the user using prepared statement to prevent injection
@@ -522,6 +525,7 @@ public class Resource {
 
                     groupInfo.close();
                     model.addAttribute("allGroups", userActiveGroups);
+                    model.addAttribute("allRequests", requestsMadeToAdmin);
                     return "usergroups";
                 }
             }
@@ -536,172 +540,5 @@ public class Resource {
         }
 
         return "usergroups";
-    }
-
-
-    /*
-        Method: userRequests
-        Purpose: this method will display all requests a user has (if they are an admin of any groups) and will allow them
-            to accept or decline requests depending on if optional parameters are passed in
-        PathVariable username - the username of the person's requests to see.. MUST BE logged in user or access forbidden
-        Principal - the currently logged in user
-        OptionalRequestParam requestUserID - this is the requesterID the user will be accepting/rejecting to group
-        OptionalRequestParam groupID - this is the groupID associated with the requester
-        OptionalRequestParam decision - this is the decision of the user for the requester and the group
-
-
-        TODO: check all 3 optional parameters, ensure groupID and requesterID are associated in requests table,
-            possibly convert to POST method
-
-     */
-    @GetMapping("/{username}/requests")
-    @ResponseBody
-    public String userRequests(@PathVariable("username") String username, Principal principal,
-                               @RequestParam(defaultValue = "-1", value = "requestID", required = false) int requestUserID,
-                               @RequestParam(value= "groupID", required=false) String groupID,
-                               @RequestParam(value= "decision", required=false) boolean decision){
-
-        // Connection and statement for SQL database
-        Connection conn = null;
-        Statement stmt = null;
-
-        // Using principal to get logged in username
-        String loggedInUser = principal.getName();
-
-        // Prepared Statements for protection against SQL Injection
-        PreparedStatement getIDPS = null;
-        PreparedStatement getRequests = null;
-        PreparedStatement deleteRequest1 = null;
-        PreparedStatement updateStudyGroupPS = null;
-        PreparedStatement updateAssociationsPS = null;
-
-        // Variables to store data later
-        int id = -1;
-        StringBuilder data = new StringBuilder();
-
-        // Determining if logged in user has access to path variable username given
-        if(!loggedInUser.equals(username)){
-            return "<h2><center>You do not have access to this individual's page!</center></h2>";
-        }
-
-        try {
-            // Open connection and execute query
-            conn = DriverManager
-                    .getConnection("jdbc:mysql://localhost:3306/studyup", "root", pass);
-            stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-
-            // If optional parameter request is not given, continue forward here
-            if(requestUserID == -1){
-
-                // Get user id SQL statement
-                String getUserID = "SELECT id FROM user WHERE username = ?";
-
-                // Using prepared statement to prevent SQL injection
-                getIDPS = conn.prepareStatement(getUserID);
-                getIDPS.setString(1, loggedInUser);
-                ResultSet userIDSet = getIDPS.executeQuery();
-
-                // Saving id to variable
-                while(userIDSet.next()){
-                    id = userIDSet.getInt("id");
-                }
-
-                // SQL statement to show all requests of logged in user
-                String findGroupsForID = "SELECT requestuserid, groupname FROM requests WHERE groupadmin_id = ?";
-
-                // Using prepared statement to prevent SQL Injection
-                getRequests = conn.prepareStatement(findGroupsForID);
-                getRequests.setInt(1, id);
-                ResultSet groups = getRequests.executeQuery();
-
-                // Passing in result set and returning table of requests to user
-                return viewTable(groups, "<h2><center>All Requests For " + username + "</center></h2>");
-
-            } else {
-
-                // Deleting request from requests table
-                String requestDelete = "DELETE FROM requests WHERE requestuserid = ? AND groupid = ?";
-
-                // Using prepared statement to prevent SQL Injection
-                deleteRequest1 = conn.prepareStatement(requestDelete);
-                deleteRequest1.setInt(1, requestUserID);
-                deleteRequest1.setString(2, groupID);
-                deleteRequest1.executeUpdate();
-
-                // If optional parameters given, determine if decision is yes or no
-                if (decision){
-
-                    // Updating numusers in studygroup since request is accepted
-                    String numUsersIncrease = "UPDATE studygroups SET numusers = numusers + 1 WHERE groupID = ?";
-                    updateStudyGroupPS = conn.prepareStatement(numUsersIncrease);
-                    updateStudyGroupPS.setString(1, groupID);
-                    updateStudyGroupPS.executeUpdate();
-
-                    // Adding accepted user as an association in the table
-                    String insertUser = "INSERT INTO associations(`groupid`, `userid`, `roles`) VALUES (?, ?, ROLE_USER)";
-                    updateAssociationsPS = conn.prepareStatement(insertUser);
-                    updateAssociationsPS.setString(1, groupID);
-                    updateAssociationsPS.setInt(2, requestUserID);
-                    updateAssociationsPS.executeUpdate();
-
-                    // Successfully accepting user to studygroup
-                    return "<h2><center>Successfully approved user request!</center></h2>";
-
-                } else {
-
-                    // Say you've successfully deleted the request
-                    return "<h2></center>You successfully denied the request!</center></h2>";
-                }
-            }
-
-        } catch (Exception se) { se.printStackTrace(); }
-        // Close Resources
-        try {
-            if (conn != null && stmt != null)
-                conn.close();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        }
-
-        // Just needed for function to not cause error
-        return "";
-    }
-
-
-
-    /*
-        Method: viewTable
-        Purpose: This method will take in a result set and modify the data in a nice table format
-        Parameter: result set which holds the data
-        Parameter: title of the table that will store the user information
-        Returns: a nice format for the information in the SQL table
-     */
-    public String viewTable(ResultSet rs, String title) throws SQLException {
-
-        // Set up for creating table
-        StringBuilder result = new StringBuilder();
-        result.append("<table border=\"1\" \nalign=\"center\"> \n<caption>").append(title).append("</caption>");
-        ResultSetMetaData rsmd = rs.getMetaData();
-        int columnsNumber = rsmd.getColumnCount();
-
-        // Getting column names from database as headers of table
-        result.append("<tr>");
-        for (int i = 1; i <= columnsNumber; i++) {
-            result.append("<th>").append(rsmd.getColumnName(i)).append("</th>");
-        }
-        result.append("</tr>");
-
-        // Obtaining database information stored in columns
-        while (rs.next()) {
-            result.append("<tr>");
-            for (int i = 1; i <= columnsNumber; i++) {
-                result.append("<td><center>").append(rs.getString(i)).append("</center</td>");
-            }
-            result.append("</tr>");
-        }
-        result.append("</table>");
-
-        // Return filled table
-        return result.toString();
     }
 }
