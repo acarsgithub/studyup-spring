@@ -27,11 +27,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
 
-                // HOW WILL WE DIFFERENTIATE BETWEEN APPLICATION USER AND ADMIN VS STUDYGROUP USER AND ADMIN ??
+                // TODO HOW WILL WE DIFFERENTIATE BETWEEN APPLICATION USER AND ADMIN VS STUDYGROUP USER AND ADMIN ??
                 .antMatchers("/signup").permitAll()
                 .antMatchers("/").permitAll()
-                .antMatchers("/request-group").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/{username}/requests").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/request-group/{groupname}").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/request/{requester}/{group}/{decision}").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/{username}").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/groups").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/create-group").hasAnyRole("USER", "ADMIN")

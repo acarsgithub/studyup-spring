@@ -60,6 +60,14 @@
                                 <p th:text="${req.requester_username}">Requester<p>
                             </div>
 
+                            <form th:action="@{'/request/' + ${req.requester_username} + '/' + ${req.groupname} + '/accept'}" method="POST">
+                                <button type="submit"><a id="accept" class="btn btn-primary">Accept</a></button>
+                            </form>
+
+                            <form th:action="@{'/request/' + ${req.requester_username} + '/' + ${req.groupname} + '/reject'}" method="POST">
+                                <button type="submit"><a id="reject" class="btn btn-primary">Reject</a></button>
+                            </form>
+
                         </div>
                     </div>
                 </div>

@@ -2,9 +2,6 @@ package io.study.studyup;
 
 import io.study.studyup.models.Group;
 import io.study.studyup.models.Request;
-import io.study.studyup.models.User;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +9,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 
-// TODO ALLOW USER TO ACCEPT OR DECLINE REQUESTS FROM MAIN PROFILE PAGE
+
+// TODO NEED TO INCREASE NUMUSERS PROPERTY FOR STUDYGROUP IN THE DATABASE FOR EACH ACCEPTED USER
+// TODO NEED TO MAKE SURE ALL LINKS WORK
+// TODO GRANT THE USER ACCESS TO THEIR PROFILE WITHOUT TYPING, NEED A LINK
+// TODO DESIGN THE WEBSITE AND CLEAN IT UP
+// TODO NEED HTML PARTIAL
+
 
 @Controller
 public class Resource {
@@ -47,7 +49,6 @@ public class Resource {
      */
     @GetMapping("/signup")
     public String createAccountGet(){
-        System.out.println("Here!");
         return "createacc";
     }
 
@@ -68,7 +69,7 @@ public class Resource {
     public String createAccount(HttpServletRequest request) {
 
         // TODO make sure all fields are included!! from the post form
-        System.out.println("Here2!");
+
         // signing up requires username, password, email, and classrank
         String username = request.getParameter("username");
         String password = request.getParameter("password");
@@ -99,8 +100,6 @@ public class Resource {
                     return("<h2><center>That email is already associated with an account!</center></h2>");
                 }
             }
-
-            System.out.println("Here3!");
 
             // If it is a new account, add to database
             String addAccount = "INSERT INTO user(`email`, `username`, `active`, `password`, `classrank`, `roles`) " +
@@ -499,7 +498,7 @@ public class Resource {
             getGroupIDPS.setInt(1, id);
             ResultSet groups = getGroupIDPS.executeQuery();
 
-            // Putting every group user is in to list
+            // Putting every group user is in into a list
             while(groups.next()){
 
                 // Security measure against SQL Injection already set in place, groupid is auto incremented!
@@ -507,7 +506,7 @@ public class Resource {
                 int groupID = groups.getInt("groupid");
                 String extractGroupInfo = "SELECT * FROM studygroups WHERE groupid = '" + groupID + "'";
 
-                // Formatting the data extarcted from the database
+                // Formatting the data extracted from the database
                 if(stmt.execute(extractGroupInfo)) {
 
                     // Obtaining study groups of user from SQL database
@@ -524,11 +523,13 @@ public class Resource {
                     }
 
                     groupInfo.close();
-                    model.addAttribute("allGroups", userActiveGroups);
-                    model.addAttribute("allRequests", requestsMadeToAdmin);
-                    return "usergroups";
                 }
             }
+
+            // transferring all requests and groups over to html client side
+            model.addAttribute("allGroups", userActiveGroups);
+            model.addAttribute("allRequests", requestsMadeToAdmin);
+            return "usergroups";
 
         } catch (Exception se) { se.printStackTrace(); }
         // Close Resources
@@ -540,6 +541,97 @@ public class Resource {
         }
 
         return "usergroups";
+    }
+
+    /*
+        Method: requestDecision
+        Purpose: This method is triggered from a form in usergroups html, where the user either accepted or rejected a request
+                 and the necessary database updates are made accordingly
+        PathVariable requester - the username of the person who requested to join the group
+        PathVariable group - the groupname of the group the requester wants to join
+        String decision - one of two options: accept or reject and indicates if an association should be created
+
+
+     */
+    @PostMapping("/request/{requester}/{group}/{decision}")
+    @ResponseBody
+    public String requestDecision(@PathVariable("requester") String requester, @PathVariable("group") String group,
+                                  @PathVariable("decision") String decision){
+
+
+        // Prepared statements for protection against SQL Injection
+        PreparedStatement removeReqPS = null;
+        PreparedStatement getIDPS = null;
+        PreparedStatement getGroupIDPS = null;
+        PreparedStatement associationPS = null;
+
+        // information needed to add to associations table, if accepted request
+        int userid = -1;
+        int groupid = -1;
+
+        // Connection and statement for SQL database
+        Connection conn = null;
+        Statement stmt = null;
+
+        try {
+            // Open connection and execute query
+            conn = DriverManager
+                    .getConnection("jdbc:mysql://localhost:3306/studyup", "root", pass);
+            stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+
+            // Deleting request from database
+            String removeRequest = "DELETE FROM requests WHERE requestusername = ? AND groupname = ?";
+            removeReqPS = conn.prepareStatement(removeRequest);
+            removeReqPS.setString(1, requester);
+            removeReqPS.setString(2, group);
+            removeReqPS.executeUpdate();
+
+            // only if accepted do we need to add to associations table
+            if(decision.equals("accept")){
+
+                // get userid for requester
+                String getID = "SELECT id FROM user WHERE username = ?";
+                getIDPS = conn.prepareStatement(getID);
+                getIDPS.setString(1, requester);
+                ResultSet getIDRS = getIDPS.executeQuery();
+
+                while(getIDRS.next()){
+                    userid = getIDRS.getInt("id");
+                }
+
+                // get groupid for group
+                String getGroupID = "SELECT groupid FROM studygroups WHERE groupname = ?";
+                getGroupIDPS = conn.prepareStatement(getGroupID);
+                getGroupIDPS.setString(1, group);
+                ResultSet getGroupIDRS = getGroupIDPS.executeQuery();
+
+                while(getGroupIDRS.next()){
+                    groupid = getGroupIDRS.getInt("groupid");
+                }
+
+                // inserting into database associations table
+                String adminAssoc = "INSERT INTO associations(`groupname`, `groupid`, `userid`, `username`, `roles`) VALUES (?, ?, ?, ?, 'ROLE_USER')";
+                associationPS = conn.prepareStatement(adminAssoc);
+                associationPS.setString(1, group);
+                associationPS.setInt(2, groupid);
+                associationPS.setInt(3, userid);
+                associationPS.setString(4, requester);
+                associationPS.executeUpdate();
+
+                return "Successfully accepted request!";
+            }
+
+
+        } catch (Exception se) { se.printStackTrace(); }
+        // Close Resources
+        try {
+            if (conn != null && stmt != null)
+                conn.close();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+
+        return "Successfully rejected request!";
     }
 
 }
