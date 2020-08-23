@@ -31,8 +31,8 @@ DROP TABLE If EXISTS requests;
 CREATE TABLE requests (
 	  groupname					VARCHAR(255)		NOT NULL,
 	  groupid       			int 	    		NOT NULL,
-      groupadmin_id				int					NOT NULL,
       groupadmin_username		VARCHAR(255) 		NOT NULL,
+      groupadmin_id				int					NOT NULL,
 	  requestuserid				int 				NOT NULL,
       requestusername			VARCHAR(255) 		NOT NULL
 );
@@ -46,4 +46,6 @@ CREATE TABLE associations (
       username					VARCHAR(255) 		NOT NULL,
 	  roles						VARCHAR(255)		CHECK(roles IN('ROLE_USER', 'ROLE_ADMIN'))
 );
+
+
 
