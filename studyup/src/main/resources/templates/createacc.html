@@ -1,3 +1,5 @@
+
+<!--
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,7 +9,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 	<link rel="stylesheet" type="text/css" href="../static/css/createacc.css" th:href="@{/css/createacc.css}">
-	    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500&display=swap" rel="stylesheet">
 
 
 </head>
@@ -67,5 +69,91 @@
     </div>
 
 </div>
+</body>
+</html>
+-->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>StudyUp</title>
+    <meta charset="UTF-8">
+    <!-- Latest compiled and minified CSS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="../static/css/creatacc.css" th:href="@{/css/createacc.css}">
+</head>
+
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+            <img th:src="@{/images/book-logo.png}" width="75" height="50" alt="">
+            StudyUp
+        </a>
+
+        <div class="navbar-text">
+            The Best Place to Study With Friends
+        </div>
+
+        <a class="navbar-brand" href="/">Login</a>
+    </nav>
+
+    <div class="screen">
+
+        <div class="logo">
+            <img th:src="@{/images/book-logo.png}" />
+            <h2>StudyUp</h2>
+        </div>
+
+        <!-- This is the setup needed for login in java spring security, cannot do it with a post method I create at this point -->
+        <div class="container" tiles:fragment="content">
+            <form th:action="@{/signup}" method="post">
+                <fieldset>
+                    <div class="legend-join">
+                        <legend>Create Account</legend>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-2" for="username">Username: </label>
+                        <div class="col-10">
+                            <input type="text" id="username" name="username" placeholder="  Username"/>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-2" for="email">Email: </label>
+                        <div class="col-10">
+                            <input type="email" id="email" name="email" placeholder="  Email"/>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-2" for="classrank">Classrank: </label>
+                        <div class="col-10">
+                            <input type="text" id="classrank" name="classrank" placeholder="  Classrank"/>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <label class="col-2" for="password">Password: </label>
+                        <div class="col-10">
+                            <input type="password" id="password" name="password" placeholder="  Password"/>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn">Join</button>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
 </body>
 </html>

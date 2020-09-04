@@ -25,7 +25,7 @@ public class Resource {
 
     /*
         Method: home
-        Purpose: temporary homepage for everyone to access when introduced to app
+        Purpose: takes user to login or register
      */
     @GetMapping("/")
     public String home() {
@@ -36,11 +36,13 @@ public class Resource {
     /*
         Method: login
         Purpose: Get method that redirects to custom login form
-     */
+
     @GetMapping("/login")
     public String loginGet(){
         return "login";
     }
+
+    */
 
 
     /*
