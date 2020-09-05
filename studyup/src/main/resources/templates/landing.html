@@ -42,13 +42,13 @@
 
     <div class="screen">
 
-        <div class="logo">
+        <span class="logo">
             <img th:src="@{/images/book-logo.png}" />
             <h2>StudyUp</h2>
-        </div>
+        </span>
 
         <!-- This is the setup needed for login in java spring security, cannot do it with a post method I create at this point -->
-        <div class="container" tiles:fragment="content">
+        <span class="container" tiles:fragment="content">
             <form th:action="@{/login}" method="post">
                 <fieldset>
                     <div class="legend-connect">
@@ -82,7 +82,7 @@
                     </div>
                 </fieldset>
             </form>
-        </div>
+        </span>
     </div>
 
 </body>
