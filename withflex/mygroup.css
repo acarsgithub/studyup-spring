@@ -1,0 +1,95 @@
+#icon{
+  margin-right: 8px;
+}
+
+body{
+  background-color: #F7F9F9;
+}
+
+
+.page{
+    font-family: 'Lora', serif;
+    display: flex;
+	justify-content: center;
+	align-items: center;
+
+}
+
+.card{
+	margin:8% 10% 10% 10% ;
+	width:60%;
+
+	text-align: left;
+	border: 2px solid black;
+	border-radius: 5px;
+	box-shadow: 5px 5px #888888;
+}
+
+.wrap{
+	display: flex;
+	justify-content: center;
+}
+
+#join{
+  width:50%;
+  border-radius: 0;
+  
+}
+
+
+#leave{
+    width:50%;
+    border-radius: 0;
+
+
+}
+
+
+.button-icon{
+  padding-left: 50px;
+}
+
+.info{
+	padding-bottom: 5%;
+}
+
+
+.title{
+	padding-top: 5%;
+}
+
+
+p{
+	padding-left: 10px;
+	padding-top: 10px;
+	padding-right: 5px;
+}
+
+.name{
+	background:#343a40;
+	padding: 10px;
+	text-align: center;
+
+}
+
+h1{
+	  color:#F4F6F7;
+
+}
+
+@media screen and (max-width: 3000px){
+
+.card{
+	margin:7% 10% 10% 10% ;
+}
+
+}
+
+@media screen and (max-width: 800px){
+
+.card{
+	margin:10% 10% 10% 10% ;
+	width:80%;
+}
+
+}
