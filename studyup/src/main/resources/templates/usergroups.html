@@ -46,7 +46,7 @@
     -->
 
     <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" href="/groups">
             <img th:src="@{/images/book-logo.png}" width="75" height="50" alt="">
             StudyUp
         </a>
@@ -55,19 +55,22 @@
             The Best Place to Study With Friends
         </div>
 
-        <a class="navbar-brand" href="/signup">Register</a>
+        <a id="profile" class="navbar-brand" th:href="@{'/' + ${user}}">Profile</a>
+
     </nav>
 
 
 
 
-            <div class="container">
-                <h2 class="display-4">Current Requests:</h2>
-                <br />
-                <th:block th:each="req : ${allRequests}">
-                    <div class=" col-lg-3 col-md-4 col-sm-6 outbox">
-                        <div class="scard ">
-                            <div class="caption">
+    <div class="container">
+        <h2 class="display-4">Current Requests:</h2>
+        <br />
+        <div class="row">
+            <th:block th:each="req : ${allRequests}">
+                <div class=" col-lg-3 col-md-4 col-sm-6 outbox">
+                    <div class="scard ">
+                        <div class="caption">
+                            <div class="row">
                                 <div class="requests">
                                     <h3 class="requests" th:text="${req.groupname}">Group Name</h3>
                                 </div>
@@ -82,17 +85,17 @@
                                     </form>
 
                                     <form th:action="@{'/request/' + ${req.requester_username} + '/' + ${req.groupname} + '/reject'}" method="POST">
-                                        <button href="" class="btn btn-primary">Reject</button>
+                                        <button href="" class="btn btn-danger">Reject</button>
                                     </form>
                                 </div>
-
                             </div>
+
                         </div>
                     </div>
-                </th:block>
-            </div>
-
-
+                </div>
+            </th:block>
+        </div>
+    </div>
 
 
     <div class="page">
@@ -107,19 +110,14 @@
 
                             <div class="groupinfo">
                                 <div class="row">
-                                    <p class="col-6">Group Admin: </p>
-                                    <p class="col-6" th:text="${group.groupadmin_username}">N/A</p>
-                                </div>
-                                <div class="row">
                                     <p class="col-6">Member Count: </p>
                                     <p class="col-6" th:text="${group.numusers}">N/A</p>
                                 </div>
-                                <!--
+
                                 <div class="row">
-                                    <p>Description: </p>
-                                    <p class="description" th:text="${group.description}">N/A</p>
+                                    <p class="col-6">Description: </p>
+                                    <p class="col-6" th:text="${group.description}">N/A</p>
                                 </div>
-                                -->
                             </div>
                         </div>
                     </div>

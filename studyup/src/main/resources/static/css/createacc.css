@@ -149,3 +149,8 @@ label {
     align-items: center;
     align-content: center;
 }
+
+#profile:hover {
+    color: #007bff;
+    cursor: pointer;
+}

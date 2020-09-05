@@ -43,7 +43,7 @@
     </nav>
     -->
     <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" href="/groups">
             <img th:src="@{/images/book-logo.png}" width="75" height="50" alt="">
             StudyUp
         </a>
@@ -52,14 +52,15 @@
             The Best Place to Study With Friends
         </div>
 
-        <a class="navbar-brand" href="/signup">Register</a>
+        <a id="profile" class="navbar-brand" th:href="@{'/' + ${user}}">Profile</a>
+
     </nav>
 
 
     <div class="container">
         <h1 class="display-4">Find active study groups:</h1>
         <p class="lead">This page shows all the available groups that can be joined!</p>
-        <button href="" class="btn btn-primary">Create Group</button>
+        <button onclick="location.href='/create-group'" class="btn btn-primary">Create Group</button>
     </div>
 
 

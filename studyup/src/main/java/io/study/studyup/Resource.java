@@ -249,7 +249,9 @@ public class Resource {
         Purpose: the get request triggers the creategroup HTML
      */
     @GetMapping("/create-group")
-    public String createNewGroupGet(){
+    public String createNewGroupGet(Model model, Principal principal)
+    {
+        model.addAttribute("user", principal.getName());
         return "creategroup";
     }
 
@@ -374,7 +376,7 @@ public class Resource {
             the groupname, the subject of each group, and the description of each group
      */
     @GetMapping("/groups")
-    public String allGroupsHome(Model model){
+    public String allGroupsHome(Model model, Principal principal){
 
         // Connection and statement for SQL database
         Connection conn = null;
@@ -408,6 +410,7 @@ public class Resource {
 
                 groupInfo.close();
                 model.addAttribute("allGroups", groups);
+                model.addAttribute("user", principal.getName());
                 return "groups";
             }
 
@@ -436,7 +439,7 @@ public class Resource {
      */
     @GetMapping("/{username}")
     public String userHome(@PathVariable("username") String username, Principal principal, Model model){
-
+        System.out.println(username);
         // Connection and statement for SQL database
         Connection conn = null;
         Statement stmt = null;
@@ -531,6 +534,7 @@ public class Resource {
             // transferring all requests and groups over to html client side
             model.addAttribute("allGroups", userActiveGroups);
             model.addAttribute("allRequests", requestsMadeToAdmin);
+            model.addAttribute("user", principal.getName());
             return "usergroups";
 
         } catch (Exception se) { se.printStackTrace(); }
