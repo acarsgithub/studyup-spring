@@ -1,0 +1,140 @@
+.page{
+
+    font-family: 'Lora', serif;
+
+}
+
+body{
+	  background-color: #F7F9F9;
+
+}
+
+
+#icon{
+	margin-right: 8px;
+}
+
+
+.top-info{
+
+	display: flex;
+	flex-direction: row;
+	margin: 0 5% 3% 5%;
+}
+
+
+.jumbotron{
+	background-color: #F7F9F9;
+	margin-top: 5%;
+}
+
+.wrapper{
+	  position: relative;
+
+	max-width: 200px;
+	max-height: 200px;
+	overflow: hidden;
+	border-radius: 50%;
+	margin-right: 5%;
+	align-self: safe center;
+}
+
+.profile-pic{
+
+
+	width: 100%;
+  height: auto;
+}
+
+
+
+.row-container{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-around;
+}
+
+.outbox{
+	flex-basis: 30%;
+  border: 2px solid black;
+ text-align: left;
+  border-radius: 5px;
+  margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+
+  border-style: double;
+  background: white;
+
+}
+.caption{
+  padding-bottom: 0;
+  margin: 0;
+}
+
+.apply-btn{
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.apply{
+  flex-basis: 60%;
+  margin-bottom: 1.5rem;
+  margin-top: 1rem;
+}
+
+.groupinfo{
+  padding: 10px;
+  padding-left: 15px;
+
+}
+
+
+.groupname{
+  padding: 10px 0 10px 10px;
+  margin: 0;
+
+  background-color: #343a40; 
+  color:#F4F6F7;
+}
+
+
+
+
+#description{
+  text-align: left;
+}
+
+
+@media screen and (max-width: 1200px){
+
+	.outbox{
+		flex-basis: 45%;
+	}
+
+}
+
+
+@media screen and (max-width: 800px){
+	.top-info{
+		flex-direction: column;
+		align-content: flex-start;
+
+	}
+
+	.wrapper{
+		margin-top: 9%;
+	}
+
+	.row-container{
+		flex-direction: column;
+		align-content: center;
+	}
+
+	.outbox{
+		width: 80%;
+	}
+
+}
