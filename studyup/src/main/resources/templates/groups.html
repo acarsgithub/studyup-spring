@@ -77,9 +77,18 @@
                             </div>
 
                           <div class="groupinfo">
-                               <p th:text="${group.groupadmin_username}">Group Admin<p>
-                               <p th:text="${group.numusers}">Group Member Count<p>
-                               <p id="description" th:text="${group.description}">Group Description</p>
+                              <div class="row">
+                                  <p class="col-6">Group Admin: </p>
+                                  <p class="col-6" th:text="${group.groupadmin_username}"></p>
+                              </div>
+                              <div class="row">
+                                  <p class="col-6">Member Count: </p>
+                                  <p class="col-6" th:text="${group.numusers}"></p>
+                              </div>
+                              <div class="row">
+                                  <p class="col-6">Description: </p>
+                                  <p class="col-6" id="description" th:text="${group.description}"></p>
+                              </div>
                            </div>
 
                            <form th:action="@{'/request-group/' + ${group.groupname}}" method="POST">

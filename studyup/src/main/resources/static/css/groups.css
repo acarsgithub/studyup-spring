@@ -36,8 +36,10 @@ button {
 }
 
 .row {
-  margin: 5%;
+  margin: 3%;
   justify-content: space-evenly;
+  text-align: left;
+  font-weight: bold;
 }
 
 .caption {
