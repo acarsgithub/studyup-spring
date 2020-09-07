@@ -34,18 +34,6 @@ public class Resource {
 
 
     /*
-        Method: login
-        Purpose: Get method that redirects to custom login form
-
-    @GetMapping("/login")
-    public String loginGet(){
-        return "login";
-    }
-
-    */
-
-
-    /*
         Method: createAccountGet
         Purpose: Get method that redirects to the create account file
      */

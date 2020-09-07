@@ -4,6 +4,7 @@
 <head>
     <title>StudyUp</title>
     <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
     <!-- Latest compiled and minified CSS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -40,15 +41,15 @@
         <a class="navbar-brand" href="/signup">Register</a>
     </nav>
 
-    <div class="screen">
+    <section class="screen">
 
-        <span class="logo">
+        <div class="logo">
             <img th:src="@{/images/book-logo.png}" />
             <h2>StudyUp</h2>
-        </span>
+        </div>
 
         <!-- This is the setup needed for login in java spring security, cannot do it with a post method I create at this point -->
-        <span class="container" tiles:fragment="content">
+        <div class="container" tiles:fragment="content">
             <form th:action="@{/login}" method="post">
                 <fieldset>
                     <div class="legend-connect">
@@ -82,8 +83,8 @@
                     </div>
                 </fieldset>
             </form>
-        </span>
-    </div>
+        </div>
+    </section>
 
 </body>
 </html>
